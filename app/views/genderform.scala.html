@@ -1,0 +1,14 @@
+@import helper._
+
+@(userForm: Form[GenderForm])(implicit messages: Messages)
+
+@main("Gender Form") {
+<h1>Select your gender in the form below</h1>
+
+    @helper.form(action = routes.FormController.genderForm) {
+    @inputRadioGroup(userForm("gender"),options = options("M"->"Male","F"->"Female", "O" -> "Others"),'_label -> "Gender")
+
+<input type="submit" value="Submit">
+
+}
+}

@@ -1,0 +1,18 @@
+@import helper._
+
+@(userForm: Form[ColourForm])(implicit messages: Messages)
+
+@main("Colour Form") {
+<h1>Select your colour in the form below</h1>
+
+@helper.form(action = routes.FormController.colourForm) {
+@checkbox(userForm("Do you select blue"), '_label -> "Blue?", '_help -> " ")
+@checkbox(userForm("Do you select purple"), '_label -> "Purple?", '_help -> " ")
+@checkbox(userForm("Do you select green"), '_label -> "Green?", '_help -> " ")
+@checkbox(userForm("Do you select pink"), '_label -> "Pink?", '_help -> " ")
+@checkbox(userForm("Do you select red"), '_label -> "Red?", '_help -> " ")
+
+
+<input type="submit" value="Submit">
+}
+}
