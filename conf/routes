@@ -5,14 +5,29 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index()
-GET     /age                        controllers.FormController.ageForm()
-+nocsrt
-POST     /age                       controllers.FormController.ageForm()
+
+GET     /age                       controllers.FormController.ageForm()
++nocsrf
+POST    /age                       controllers.FormController.submitAgeForm()
+
+GET     /colour                     controllers.FormController.colourForm()
++nocsrf
+POST    /colour                     controllers.FormController.submitColourForm()
+
+GET     /job                        controllers.FormController.jobForm()
++nocsrf
+POST    /job                        controllers.FormController.submitJobForm()
+
+GET     /name                       controllers.FormController.nameForm()
++nocsrf
+POST     /name                      controllers.FormController.submitNameForm()
 
 GET     /gender                     controllers.FormController.genderForm()
-GET     /job                        controllers.FormController.jobForm()
-GET     /name                       controllers.FormController.nameForm()
-GET     /colour                     controllers.FormController.colourForm()
++nocsrf
+POST     /gender                    controllers.FormController.submitGenderForm()
+
+
+
 GET     /summary                    controllers.HomeController.summary()
 
 

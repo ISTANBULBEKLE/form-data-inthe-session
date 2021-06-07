@@ -1,12 +1,12 @@
 @import helper._
 
-@(userForm: Form[JobForm])(implicit messages: Messages)
+@(jobFormHelper: Form[JobFormModel])(implicit messages: Messages)
 
 @main("Job Form") {
 <h1>Put your job in the form below</h1>
 
-    @helper.form(action = routes.FormController.jobForm) {
-    @inputText(userForm("Your Job"))
+    @helper.form(action = routes.FormController.submitJobForm) {
+    @inputText(jobFormHelper("job"))
 
 <input type="submit" value="Submit">
 }

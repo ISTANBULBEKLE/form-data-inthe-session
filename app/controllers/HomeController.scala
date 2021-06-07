@@ -19,20 +19,13 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * a path of `/`.
    */
   def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index()).withSession("FORM_DATA" -> "session started")
+    Ok(views.html.index())
   }
 
-  def summary = Action { request =>
-    val a = request.session.get("test")
-    println("test " + a)
-    request.session
-      .get("FORM_DATA")
-      .map { user =>
-        Ok("Hello " + user)
-      }
-      .getOrElse {
-        Unauthorized("Oops, you are not connected")
-      }
+  def summary = Action { implicit request: Request[AnyContent] =>
+
+    println(" summary request.session " + request.session)
+    Ok(views.html.summary())
   }
 
 }

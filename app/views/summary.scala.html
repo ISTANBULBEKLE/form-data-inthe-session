@@ -1,5 +1,11 @@
-@()
+@()(implicit session: Session)
 
 @main("Welcome to Summary Page") {
-<h1>Form Summary</h1>
+    <h1>Form Summary</h1>
+
+    <h2>Age:@session.get("age").getOrElse("You did not select any age !")</h2>
+    <h2>Colours:@session.get("colour").getOrElse("You did not select any colour !")</h2>
+    <h2>Job:@session.get("job").getOrElse("You did not select any job !")</h2>
+    <h2>Name:@session.get("name").getOrElse("You did not select any name !")</h2>
+    <h2>Gender:@session.get("gender").getOrElse("You did not select any gender !")</h2>
 }

@@ -1,91 +1,123 @@
 package controllers
 
 import play.api.data.Form
-import play.api.data.Forms.{boolean, mapping, number, text}
-import play.api.mvc.{AbstractController, AnyContent, BaseController, ControllerComponents, Request}
-import javax.inject.{Inject, Singleton}
+import play.api.data.Forms.{list, mapping, number, text}
+import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
+
+import javax.inject.Inject
 
 
 class FormController @Inject() (cc: ControllerComponents) extends AbstractController(cc) with play.api.i18n.I18nSupport{
 
   def ageForm()= Action{ implicit request: Request[AnyContent] =>
-    val receivedData = request.body.asFormUrlEncoded
-    println("receiveddata " + receivedData)
-
-    val ageFromInput = receivedData.map{ args =>
-      args("Your Age").head
-    }.getOrElse(Ok("Error"))
-
-    val ageDataAddSession = request.session + ("age" -> s"${ageFromInput}")
-    Ok(views.html.ageform(AgeForm.form)).withSession(ageDataAddSession)
+    println(" age request.session " + request.session)
+    Ok(views.html.ageform(AgeForm.form.fill(AgeFormModel())))
   }
 
-  def genderForm()= Action{ implicit request: Request[AnyContent] =>
-    Ok(views.html.genderform(GenderForm.form))
-  }
-
-  def jobForm()= Action{ implicit request: Request[AnyContent] =>
-    Ok(views.html.jobform(JobForm.form))
-  }
-
-  def nameForm()= Action{ implicit request: Request[AnyContent] =>
-    Ok(views.html.nameform(NameForm.form))
+  def submitAgeForm () = Action{implicit request =>
+    println()
+    AgeForm.form.bindFromRequest().fold(
+      formWithErrors => BadRequest(views.html.ageform(formWithErrors)),
+      success        => Redirect(controllers.routes.FormController.colourForm()).withSession(request.session + ("age" -> s"${success.age}"))
+      )
   }
 
   def colourForm()= Action{ implicit request: Request[AnyContent] =>
-    Ok(views.html.colourform(ColourForm.form))
+    println("colour request.session " + request.session)
+    Ok(views.html.colourform(ColourForm.form.fill(ColourFormModel(List()))))
   }
 
+  def submitColourForm()= Action {implicit request =>
+    ColourForm.form.bindFromRequest().fold(
+      formWithErrors => BadRequest(views.html.colourform(formWithErrors)),
+      success        => Redirect(controllers.routes.FormController.jobForm()).withSession(request.session + ("colour" -> s"${success.colour}"))
+    )
+  }
 
+  def jobForm()= Action{ implicit request: Request[AnyContent] =>
+    println("job request.session " + request.session)
+    Ok(views.html.jobform(JobForm.form.fill(JobFormModel())))
+  }
+
+  def submitJobForm()= Action{implicit request =>
+    JobForm.form.bindFromRequest().fold(
+      formWithErrors => BadRequest(views.html.jobform(formWithErrors)),
+      success        => Redirect(controllers.routes.FormController.nameForm()).withSession(request.session + ("job" -> s"${success.job}"))
+    )
+  }
+
+  def nameForm()= Action{ implicit request: Request[AnyContent] =>
+    println("name request.session " + request.session)
+    Ok(views.html.nameform(NameForm.form.fill(NameFormModel())))
+  }
+
+  def submitNameForm()= Action{implicit request =>
+    NameForm.form.bindFromRequest().fold(
+      formWithErrors => BadRequest(views.html.nameform(formWithErrors)),
+      success        => Redirect(controllers.routes.FormController.genderForm()).withSession(request.session + ("name" -> s"${success.name}"))
+    )
+  }
+
+  def genderForm()= Action{ implicit request: Request[AnyContent] =>
+    println("gender request.session " + request.session)
+    Ok(views.html.genderform(GenderForm.form.fill(GenderFormModel())))
+  }
+
+  def submitGenderForm()=Action{implicit request =>
+  GenderForm.form.bindFromRequest().fold(
+    formWithErrors => BadRequest(views.html.genderform(formWithErrors)),
+    success        => Redirect(controllers.routes.HomeController.summary()).withSession(request.session + ("gender" -> s"${success.gender}"))
+  )
+}
 }
 
-case class AgeForm(age:Int)
+case class AgeFormModel(age:Int= 25)
+
 object AgeForm {
-  val form: Form[AgeForm] = Form(
+  val form: Form[AgeFormModel] = Form(
     mapping(
       "age" -> number
-    )(AgeForm.apply)(AgeForm.unapply)
-  )
-}
-case class GenderForm(woman:Boolean, man:Boolean)
-object GenderForm {
-  val form: Form[GenderForm] = Form(
-    mapping(
-      "woman" -> boolean,
-      "man"   -> boolean
-    )(GenderForm.apply)(GenderForm.unapply)
+    )(AgeFormModel.apply)(AgeFormModel.unapply)
   )
 }
 
-case class JobForm(job:String)
+case class ColourFormModel(colour:List[String])
+object ColourForm {
+  val form: Form[ColourFormModel] = Form(
+    mapping(
+      "colour"    -> list(text)
+    )(ColourFormModel.apply)(ColourFormModel.unapply)
+  )
+}
+
+case class JobFormModel(job:String="Astronaut")
 object JobForm {
-  val form: Form[JobForm] = Form(
+  val form: Form[JobFormModel] = Form(
     mapping(
       "job" -> text
-    )(JobForm.apply)(JobForm.unapply)
+    )(JobFormModel.apply)(JobFormModel.unapply)
   )
 }
 
-case class NameForm(name:String)
+case class NameFormModel(name:String="Ekip Kalir")
 object NameForm {
-  val form: Form[NameForm] = Form(
+  val form: Form[NameFormModel] = Form(
     mapping(
       "name" -> text
-    )(NameForm.apply)(NameForm.unapply)
+    )(NameFormModel.apply)(NameFormModel.unapply)
   )
 }
-case class ColourForm(blue:Boolean, purple:Boolean, green:Boolean, pink:Boolean, red:Boolean)
-object ColourForm {
-  val form: Form[ColourForm] = Form(
+
+case class GenderFormModel(gender:String="Male")
+object GenderForm {
+  val form: Form[GenderFormModel] = Form(
     mapping(
-      "blue"    -> boolean,
-      "purple"  -> boolean,
-      "green"   -> boolean,
-      "pink"    -> boolean,
-      "red"     -> boolean
-    )(ColourForm.apply)(ColourForm.unapply)
+      "gender"   -> text
+    )(GenderFormModel.apply)(GenderFormModel.unapply)
   )
 }
+
+
 
 
 

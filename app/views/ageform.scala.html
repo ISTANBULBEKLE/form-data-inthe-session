@@ -1,12 +1,12 @@
 @import helper._
 
-@(userForm: Form[AgeForm])(implicit messages: Messages)
+@(ageFormHelper: Form[AgeFormModel])(implicit messages: Messages)
 
 @main("Age Form") {
 <h1>Put your age in the form below</h1>
 
-@helper.form(action = routes.FormController.ageForm) {
-@inputText(userForm("Your Age"))
+@helper.form(action = routes.FormController.submitAgeForm) {
+@inputText(ageFormHelper("age"))
 
 <input type="submit" value="Submit">
 }

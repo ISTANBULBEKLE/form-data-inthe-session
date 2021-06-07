@@ -1,14 +1,21 @@
 package controllers
 
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.http.Status
 import play.api.http.Status.OK
+import play.api.mvc.BodyParsers.utils.when
+import play.api.mvc.ControllerComponents
 import play.api.test.Helpers.{GET, contentAsString, contentType, defaultAwaitTimeout, status, stubControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
+import scala.reflect.ClassManifestFactory.Any
 
 
 
 class FormControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+  lazy val controllerComponents: ControllerComponents = app.injector.instanceOf[ControllerComponents]
+
 
   "FormController GET" should {
 
@@ -95,7 +102,7 @@ class FormControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
 
     "render the nameForm page from the application" in {
       val controller = inject[FormController]
-      val name = controller.nameForm().apply(FakeRequest(GET, "/namename"))
+      val name = controller.nameForm().apply(FakeRequest(GET, "/name"))
 
       status(name) mustBe OK
       contentType(name) mustBe Some("text/html")
@@ -103,4 +110,30 @@ class FormControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
     }
 
   }
+
+  val mockDataRepository: AgeFormModel = mock[AgeFormModel]
+  val dataModelAge:AgeFormModel=AgeFormModel(34)
+
+  "FormController .submitAgeForm" should{
+    "return OK" when {
+      "an age of integer submitted" in{
+        when(mockDataRepository(Any[Int])
+          .thenReturn(dataModelAge)
+
+          status(result) shouldBe (Status.OK)
+
+      }
+    }
+
+//    "return BadRequest" when{
+//      "not an integer is submitted" in{
+//        when()
+//          .thenReturn(dataModelAge)
+//
+//        status(result) shouldBe Status.BAD_REQUEST
+//      }
+//    }
+
+  }
+
 }
