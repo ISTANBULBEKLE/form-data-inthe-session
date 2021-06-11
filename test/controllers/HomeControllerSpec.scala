@@ -41,5 +41,24 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       contentType(home) mustBe Some("text/html")
       contentAsString(home) must include ("Welcome to Play")
     }
+
+    "render the summary page from a new instance of controller" in {
+      val controller = new HomeController(stubControllerComponents())
+      val summaryHome = controller.summary().apply(FakeRequest(GET, "/summary"))
+
+      status(summaryHome) mustBe OK
+      contentType(summaryHome) mustBe Some("text/html")
+      contentAsString(summaryHome) must include ("Summary")
+    }
+
+    "render the summary page from the application" in {
+      val controller = inject[HomeController]
+      val summaryHome = controller.summary().apply(FakeRequest(GET, "/summary"))
+
+      status(summaryHome) mustBe OK
+      contentType(summaryHome) mustBe Some("text/html")
+      contentAsString(summaryHome) must include ("Summary")
+    }
+
   }
 }

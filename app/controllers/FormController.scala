@@ -10,12 +10,12 @@ import javax.inject.Inject
 class FormController @Inject() (cc: ControllerComponents) extends AbstractController(cc) with play.api.i18n.I18nSupport{
 
   def ageForm()= Action{ implicit request: Request[AnyContent] =>
-    println(" age request.session " + request.session)
+    // println(" age request.session " + request.session)
     Ok(views.html.ageform(AgeForm.form.fill(AgeFormModel())))
   }
 
   def submitAgeForm () = Action{implicit request =>
-    println()
+    // println("what we get from bindFromRequest" + AgeForm.form.bindFromRequest)
     AgeForm.form.bindFromRequest().fold(
       formWithErrors => BadRequest(views.html.ageform(formWithErrors)),
       success        => Redirect(controllers.routes.FormController.colourForm()).withSession(request.session + ("age" -> s"${success.age}"))
@@ -23,8 +23,8 @@ class FormController @Inject() (cc: ControllerComponents) extends AbstractContro
   }
 
   def colourForm()= Action{ implicit request: Request[AnyContent] =>
-    println("colour request.session " + request.session)
-    Ok(views.html.colourform(ColourForm.form.fill(ColourFormModel(List()))))
+    // println("colour request.session " + request.session)
+    Ok(views.html.colourform(ColourForm.form.fill(ColourFormModel(List("green")))))
   }
 
   def submitColourForm()= Action {implicit request =>
@@ -35,7 +35,7 @@ class FormController @Inject() (cc: ControllerComponents) extends AbstractContro
   }
 
   def jobForm()= Action{ implicit request: Request[AnyContent] =>
-    println("job request.session " + request.session)
+    // println("job request.session " + request.session)
     Ok(views.html.jobform(JobForm.form.fill(JobFormModel())))
   }
 
@@ -47,7 +47,7 @@ class FormController @Inject() (cc: ControllerComponents) extends AbstractContro
   }
 
   def nameForm()= Action{ implicit request: Request[AnyContent] =>
-    println("name request.session " + request.session)
+    // println("name request.session " + request.session)
     Ok(views.html.nameform(NameForm.form.fill(NameFormModel())))
   }
 
@@ -59,7 +59,7 @@ class FormController @Inject() (cc: ControllerComponents) extends AbstractContro
   }
 
   def genderForm()= Action{ implicit request: Request[AnyContent] =>
-    println("gender request.session " + request.session)
+    // println("gender request.session " + request.session)
     Ok(views.html.genderform(GenderForm.form.fill(GenderFormModel())))
   }
 
@@ -72,7 +72,6 @@ class FormController @Inject() (cc: ControllerComponents) extends AbstractContro
 }
 
 case class AgeFormModel(age:Int= 25)
-
 object AgeForm {
   val form: Form[AgeFormModel] = Form(
     mapping(

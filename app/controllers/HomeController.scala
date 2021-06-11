@@ -23,7 +23,6 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   }
 
   def summary = Action { implicit request: Request[AnyContent] =>
-
     println(" summary request.session " + request.session)
     Ok(views.html.summary())
   }

@@ -1,21 +1,25 @@
 package controllers
 
-import org.scalatestplus.mockito.MockitoSugar.mock
+
+
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.Play.materializer
+import play.api.data.Forms.{list, text}
 import play.api.http.Status
 import play.api.http.Status.OK
-import play.api.mvc.BodyParsers.utils.when
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.ControllerComponents
-import play.api.test.Helpers.{GET, contentAsString, contentType, defaultAwaitTimeout, status, stubControllerComponents}
+import play.api.test.Helpers.{GET, POST, contentAsString, contentType, defaultAwaitTimeout, status, stubControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
-import scala.reflect.ClassManifestFactory.Any
-
 
 
 class FormControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
   lazy val controllerComponents: ControllerComponents = app.injector.instanceOf[ControllerComponents]
 
+  object TestFormController extends FormController(
+    controllerComponents
+  )
 
   "FormController GET" should {
 
@@ -111,29 +115,102 @@ class FormControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
 
   }
 
-  val mockDataRepository: AgeFormModel = mock[AgeFormModel]
-  val dataModelAge:AgeFormModel=AgeFormModel(34)
-
-  "FormController .submitAgeForm" should{
-    "return OK" when {
-      "an age of integer submitted" in{
-        when(mockDataRepository(Any[Int])
-          .thenReturn(dataModelAge)
-
-          status(result) shouldBe (Status.OK)
-
+  "FormController POST" should {
+    ///submitAgeForm
+    "the json body in submitAgeForm  is valid" when {
+      val jsonBody: JsObject = Json.obj(
+        "age" -> 24
+      )
+      "return the status code Redirect (See_Other)" in{
+        val result =TestFormController.submitAgeForm().apply(FakeRequest(POST,"/age").withJsonBody(jsonBody))
+        status(result) mustBe Status.SEE_OTHER
       }
     }
 
-//    "return BadRequest" when{
-//      "not an integer is submitted" in{
-//        when()
-//          .thenReturn(dataModelAge)
+    "the json body in submitAgeForm  is invalid" when {
+      val jsonBody: JsObject = Json.obj(
+        "unexpected field" -> "foo"
+      )
+      "return the status code Bad Request" in{
+        val result =TestFormController.submitAgeForm().apply(FakeRequest(POST,"/age").withJsonBody(jsonBody))
+        status(result) mustBe Status.BAD_REQUEST
+      }
+    }
+    /////submitColorForm
+    "the json body in submitColorForm  is valid" when{
+      val jsonBody: JsObject = Json.obj(
+        "colour"    -> "green"
+      )
+      "return the status code Redirect (See_Other)" in{
+        val result = TestFormController.submitColourForm().apply(FakeRequest(POST,"/colour").withJsonBody(jsonBody))
+        status(result) mustBe Status.SEE_OTHER
+      }
+    }
 //
-//        status(result) shouldBe Status.BAD_REQUEST
+//    "the json body in submitColorForm  is invalid" when{
+//      "return the status code Bad Request" in{
+//        val result = TestFormController.submitColourForm().apply(FakeRequest(POST,"/colour"))
+//        status(result) mustBe Status.BAD_REQUEST
 //      }
 //    }
 
+    ////submitJobForm
+    "the json body in submitJobForm  is valid" when {
+      val jsonBody: JsObject = Json.obj(
+        "job" -> "astronaut"
+      )
+      "return the status code Redirect (See_Other)" in{
+        val result =TestFormController.submitJobForm().apply(FakeRequest(POST,"/job").withJsonBody(jsonBody))
+        status(result) mustBe Status.SEE_OTHER
+      }
+    }
+
+    "the json body in submitJobForm  is invalid" when {
+      "return the status code Bad Request" in{
+        val result =TestFormController.submitJobForm().apply(FakeRequest(POST,"/job"))
+        status(result) mustBe Status.BAD_REQUEST
+      }
+    }
+
+    ////submitNameForm
+    "the json body in submitNameForm  is valid" when {
+      val jsonBody: JsObject = Json.obj(
+        "name" -> "ekip"
+      )
+      "return the status code Redirect (See_Other)" in{
+        val result =TestFormController.submitNameForm().apply(FakeRequest(POST,"/name").withJsonBody(jsonBody))
+        status(result) mustBe Status.SEE_OTHER
+      }
+    }
+
+    "the json body in submitNameForm  is invalid" when {
+      "return the status code Bad Request" in{
+        val result =TestFormController.submitNameForm().apply(FakeRequest(POST,"/name"))
+        status(result) mustBe Status.BAD_REQUEST
+      }
+    }
+
+    ////submitGenderForm
+    "the json body in submitGenderForm  is valid" when {
+      val jsonBody: JsObject = Json.obj(
+        "gender" -> "male"
+      )
+      "return the status code Redirect (See_Other)" in{
+        val result =TestFormController.submitGenderForm().apply(FakeRequest(POST,"/gender").withJsonBody(jsonBody))
+        status(result) mustBe Status.SEE_OTHER
+      }
+    }
+
+    "the json body in submitGenderForm  is invalid" when {
+      "return the status code Bad Request" in{
+        val result =TestFormController.submitGenderForm().apply(FakeRequest(POST,"/gender"))
+        status(result) mustBe Status.BAD_REQUEST
+      }
+    }
+
   }
+
+
+
 
 }
